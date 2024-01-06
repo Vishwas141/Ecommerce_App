@@ -1,0 +1,59 @@
+@media only screen and (max-width: 400px) {
+ 
+    .product
+    {
+        width: 100vw;
+
+        flex-direction: column;
+
+        justify-content: center;
+        align-items:center;
+
+    }
+    .eachproduct
+    {
+        width:80vw;
+    }
+
+    .products
+    {
+        width: 80vw;
+        display: flex;
+        justify-content: center;
+        align-items:center;
+        margin:auto;
+        margin-bottom: 20px;
+
+
+    }
+    .filter
+    {
+        width:100vw;
+        /* margin-top: -70px; */
+        gap: 20px;
+
+    }
+    .price
+    {
+        margin-bottom: 100px;
+        
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+    }
+    .minmax
+    {
+        display: flex;
+        flex-direction:row;
+        justify-content: center;
+        align-items:center;
+        
+    }
+    #labels-range-input
+    {
+        width: 80vw;
+    }
+}
