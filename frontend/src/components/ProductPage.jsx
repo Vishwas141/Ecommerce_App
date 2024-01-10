@@ -7,6 +7,7 @@ import "../Styles/ProductPage.css"
 import { useSelector } from 'react-redux';
 
 
+
 const ProductPage = () =>
 {
     const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -17,13 +18,19 @@ const ProductPage = () =>
     const [user, setUser] = useState({});
     const [minValue, setminValue] = useState(0);
     const [maxValue, setmaxValue] = useState(50000);
+    const navigate = useNavigate();
+
+    
 
     const handleRangeChange = (event) =>
     {
         setmaxValue(event.target.value);
+        navigate(`/search?product=${searchProduct}&minvalue=${minValue}&maxvalue=${maxValue}`);
+
     }
     useEffect(() =>
     {
+        
         setUser(data);
     },[])
 
@@ -167,7 +174,7 @@ const ProductPage = () =>
                       arr.map((product, index) => {
                           return (
                               <div key={index}>
-                                  <Link to={`/${product}`} >
+                                  <Link to={`/product/${product}`} >
                                       <div className="eachproduct bg-white rounded-lg overflow-hidden shadow-lg ring-4 ring-red-500 ring-opacity-40 w-[20vw]">
                                           <div className="relative">
                                               <img
@@ -196,7 +203,7 @@ const ProductPage = () =>
                                                      ) 
                                                   }
                                                   <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded">
-                                                      Order
+                                                      Cart
                                                   </button>
                                               </div>
                                           </div>

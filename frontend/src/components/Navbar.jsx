@@ -13,14 +13,23 @@ const Navbar = () =>
     const navigate = useNavigate();
     const [userMenu, setuserMenu] = useState(false);
     const data = useSelector((state) => state.user.user);
-    const [user, setuser] = useState({});
-    const [userRole, setuserRole] = useState('admin');
-    const [searchProduct, setsearchProduct] = useState("");
+   
+    
 
-    // Move setuser(data) inside a useEffect to avoid infinite rendering
+    const [user, setuser] = useState({});
     useEffect(() => {
         setuser(data);
     }, [data]);
+
+    // const [userRole, setuserRole] = useState('admin');
+    const [searchProduct, setsearchProduct] = useState("");
+    console.log(user?.role);
+
+    // Move setuser(data) inside a useEffect to avoid infinite rendering
+   
+
+    console.log("user",user);
+
 
     
     const handleSearch = () => {
@@ -28,7 +37,7 @@ const Navbar = () =>
     }
 
     const checkUserExists = () => {
-        if (!user)
+        if (!data)
         {
             navigate("/login");
         }
@@ -88,10 +97,10 @@ const Navbar = () =>
                               >
                                   <div className="px-4 py-3">
                                       <span className="block text-sm text-gray-900 dark:text-white">
-                                         {`${user.firstName} ${user.lastName}`}
+                                         {`${user?.firstName} ${user?.lastName}`}
                                       </span>
                                       <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">
-                                          {user.email}
+                                          {user?.email}
                                       </span>
                                   </div>
                                   <ul className="py-2" aria-labelledby="user-menu-button">
@@ -134,24 +143,25 @@ const Navbar = () =>
                               </a>
                           </li>
                           <li>
-                              <a
-                                  href="#"
+                              <Link
+                                  to={"/search"}
                                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                               >
                                   Products
-                              </a>
+                              </Link>
                           </li>
                           {
-                              user && user?.role == 'admin' && 
+                            //   during production need to apply change here 
+                              user && user?.role == 'customer' && 
                               (
                                   <div>
                                       <li>
-                                          <a
-                                              href="#"
+                                          <Link
+                                              to={"/createproduct"}
                                               className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                                           >
                                               Add Products
-                                          </a>
+                                          </Link>
                                       </li>
                                   </div>
                               )

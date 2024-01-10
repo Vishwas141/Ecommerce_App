@@ -11,19 +11,22 @@ const FrontPage = () => {
   const userStatus = useSelector((state) => state.user.status);
   
   useEffect(() => {
-    if (userStatus === 'idle') {
+    if (userStatus === 'idle')
+    {
+      console.log("called");
       dispatch(fetchUserInfo());
     }
   }, [userStatus, dispatch]);
 
   console.log("frontend ", user);
 
-  const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   return (
     <div>
-      <Navbar />
+      <Navbar/>
       <ProductPage />
-      <Footer />
+      <Footer/>
+    
     </div>
   )
 }

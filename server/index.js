@@ -5,9 +5,16 @@ const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 var cookieParser = require('cookie-parser');
+const fileUpload = require("express-fileupload");
 const app = express();
 app.use(cookieParser())
 dotenv.config();
+
+
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : '/tmp/'
+}));
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,8 +29,21 @@ app.use(express.json());
 
 //userRoutes
 
+
+const databaseConnection = require("./connection/databaseConnection");
+databaseConnection();
+
+const { cloudinaryConnection } =require("./connection/cloudinaryConnection")
+cloudinaryConnection();
+
+
 const userRoute = require("./routes/userRoute");
 app.use("/api/auth", userRoute);
+
+
+const productRoute = require("./routes/productRoute");
+app.use("/api/product", productRoute);
+
 
 
 
@@ -31,8 +51,7 @@ app.use("/api/auth", userRoute);
 /* The code `const databaseConnection = require("./connection/databaseConnection");` is importing a
 module or file named `databaseConnection` from the `./connection` directory. */
 
-const databaseConnection = require("./connection/databaseConnection");
-databaseConnection();
+
 
 
 // Start the server
