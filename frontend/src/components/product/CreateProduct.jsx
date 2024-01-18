@@ -64,6 +64,8 @@ const CreateProduct = () => {
                         <span className="text-gray-700  font-semibold text-[18px]">Description:</span>
                         <textarea
                             className="form-input mt-1 block w-9/12 border border-black rounded-md py-2"
+                            type="text"
+                            name="description"
                             value={formData.description}
                             onChange={handleChange}
                         />

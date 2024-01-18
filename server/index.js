@@ -6,8 +6,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 var cookieParser = require('cookie-parser');
 const fileUpload = require("express-fileupload");
+
+
 const app = express();
-app.use(cookieParser())
+app.use(cookieParser());
+
 dotenv.config();
 
 
@@ -43,6 +46,9 @@ app.use("/api/auth", userRoute);
 
 const productRoute = require("./routes/productRoute");
 app.use("/api/product", productRoute);
+
+const cartRoute = require("./routes/cartRoutes");
+app.use("/api/cart", cartRoute);
 
 
 

@@ -7,7 +7,7 @@ exports.register = async (req, res) => {
   try {
     const { firstName, lastName, email, password, confirmPassword, mobile } =
       req.body;
-
+    console.log(req.body);
     // Check if the password and confirmPassword match
     if (password !== confirmPassword) {
       return res
@@ -18,14 +18,21 @@ exports.register = async (req, res) => {
     // Check if the user already exists with the given email
     const existingUser = await User.findOne({ email });
 
+    
+
+
     if (existingUser) {
       return res
         .status(400)
         .json({ error: "User with this email already exists" });
     }
 
+
+
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    
 
     // Create a new user
     const newUser = await User.create({
@@ -35,6 +42,8 @@ exports.register = async (req, res) => {
       password: hashedPassword,
       mobile,
     });
+
+    
 
     // Generate JWT token for authentication
     const token = jwt.sign({ id: newUser._id }, "Vishwas", { expiresIn: "1h" });
@@ -50,7 +59,8 @@ exports.register = async (req, res) => {
       token,
       success: true,
     });
-  } catch (err) {
+  } catch (err)
+  {
     return res.status(500).json({ error: err.message, success: false });
   }
 };
@@ -58,6 +68,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(req.body);
 
     // Check if the user exists with the given email
     const user = await User.findOne({ email });
@@ -73,7 +84,7 @@ exports.login = async (req, res) => {
 
     console.log(passwordMatch);
 
-    if (passwordMatch) {
+    if (!passwordMatch) {
       return res.status(401).json({
         error: "Invalid email or password",
       });

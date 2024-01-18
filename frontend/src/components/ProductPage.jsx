@@ -4,21 +4,54 @@ import { useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import "../Styles/ProductPage.css"
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllProductLink } from '../api_calls/productApi';
+import axios from "axios";
+import { addToCart } from '../api_calls/cartApi';
+
+
+const appendChar = (s) => {
+    // Check if the string length is already 200 or more
+    if (s.length >= 200) {
+        return s;
+    }
+
+    // Calculate the number of spaces needed to reach a length of 200
+    const spacesNeeded = 200 - s.length;
+
+    // Append the required number of spaces to the string
+    for (let i = 0; i < spacesNeeded; i++) {
+        s += '-';
+    }
+    console.log(s);
+
+    return s;
+};
 
 
 
 const ProductPage = () =>
 {
-    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+   
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const searchProduct = searchParams.get('product');
+
+
     const data = useSelector((state) => state.user.user);
     const [user, setUser] = useState({});
+
+
+
     const [minValue, setminValue] = useState(0);
     const [maxValue, setmaxValue] = useState(50000);
+
+
+
+
+
     const navigate = useNavigate();
+    const [products, setProduct] = useState([]);
 
     
 
@@ -28,12 +61,49 @@ const ProductPage = () =>
         navigate(`/search?product=${searchProduct}&minvalue=${minValue}&maxvalue=${maxValue}`);
 
     }
+
+    const handleNavigate = (productId) =>
+    {
+        navigate(`/edit/${productId}`);
+    }
+
+    const cartHandler = async (productId, productPrice, quantity) => {
+        try {
+            console.log("cart handler called");
+            const data = await axios.post(addToCart, {
+                productId: productId,
+                price: productPrice,
+                quantity: quantity
+            }, { withCredentials: true })
+
+            console.log(data);
+
+        }
+        catch (err) {
+            console.log("error while adding product to cart");
+        }
+    }
+
     useEffect(() =>
     {
-        
-        setUser(data);
-    },[])
 
+        
+        const fetchData = async () => {
+            try {
+               
+                const response = await axios.get(getAllProductLink);
+
+                setProduct(response.data.data); 
+
+                console.log("response: " + response.data.data);
+            } catch (error) {
+                console.error('Error performing search:', error);
+            }
+        };
+        setUser(data);
+        fetchData();
+    },[])
+    console.log("aaaaaaaaaaa",products);
 
     
 
@@ -171,44 +241,59 @@ const ProductPage = () =>
           
               <div className='products flex flex-wrap justify-center items-center gap-7 w-8/12   mt-[70px]'>
                   {
-                      arr.map((product, index) => {
+                      products && products?.map((product, index) => {
                           return (
                               <div key={index}>
-                                  <Link to={`/product/${product}`} >
+                                  
                                       <div className="eachproduct bg-white rounded-lg overflow-hidden shadow-lg ring-4 ring-red-500 ring-opacity-40 w-[20vw]">
-                                          <div className="relative">
-                                              <img
-                                                  className="w-11/12 mx-auto mt-2"
-                                                  src="https://images.unsplash.com/photo-1523275335684-37898b6baf30"
+                                      <div className="relative">
+                                          <Link to={`/product/${product}`} ></Link>
+                                          <img
+                                              className="w-11/12 mx-auto mt-2 h-[150px] object-cotain"
+                                              src={product?.imageUrl
+}
+
                                                   alt="Product Image"
-                                              />
+                                          />
+                                          <Link/>
                                               {/* <div className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 m-2 rounded-md text-sm font-medium">
                                                   SALE
                                               </div> */}
                                           </div>
                                           <div className="p-4">
-                                              <h3 className="text-lg font-medium mb-2">Product Title</h3>
+                                              <h3 className="text-lg font-medium mb-2">{ product.name}</h3>
                                               <p className="text-gray-600 text-sm mb-4">
-                                                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae ante
-                                                  vel eros fermentum faucibus sit amet euismod lorem.
+                                              {
+                                                  product.description.trim().length > 200
+                                                      ? product.description.substring(0, 180) : appendChar(product.description)
+
+
+
+                                              }
                                               </p>
                                               <div className="flex items-center justify-between">
-                                                  <span className="font-bold text-lg">$19.99</span>
-                                                  {
-                                                      user && user.role ==='customer' && 
-                                                      (
-                                                          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded">
+                                              <span className="font-bold text-lg">${product.price}</span>
+                                              {
+                                                  user && user.role === 'customer' &&
+                                                  (
+
+                                                      <button onClick={() => handleNavigate(product._id)}>
+                                                          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded" >
                                                               Edit
                                                           </button>
-                                                     ) 
-                                                  }
-                                                  <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded">
-                                                      Cart
-                                                  </button>
+                                                      </button>
+
+
+
+                                                  )
+                                              }
+                                              <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded" onClick={() => { cartHandler(product._id, product.price, product.stock) }}>
+                                                  Cart
+                                              </button>
                                               </div>
                                           </div>
                                       </div>
-                                  </Link>
+                                  
 
                               </div>
                           )

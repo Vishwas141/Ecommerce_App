@@ -24,6 +24,7 @@ const RegisterPage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
+            console.log("hello");
             const response = await axios.post(registerLink, userData,{withCredentials:true});
            
 

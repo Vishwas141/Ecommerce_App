@@ -10,13 +10,13 @@ const FrontPage = () => {
   const user = useSelector((state) => state.user.user);
   const userStatus = useSelector((state) => state.user.status);
   
-  useEffect(() => {
-    if (userStatus === 'idle')
-    {
-      console.log("called");
-      dispatch(fetchUserInfo());
-    }
-  }, [userStatus, dispatch]);
+  // useEffect(() => {
+  //   if (userStatus === 'idle')
+  //   {
+  //     console.log("called");
+  //     dispatch(fetchUserInfo());
+  //   }
+  // }, [userStatus, dispatch]);
 
   console.log("frontend ", user);
 

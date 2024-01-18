@@ -9,10 +9,32 @@ import axios from "axios"
 import { getProductLink } from '../../api_calls/productApi';
 import NoProductFoundPage from './NoProductFoundPage';
 import Footer from "../Footer"
+import { addToCart } from '../../api_calls/cartApi';
+
+
+const appendChar = (s) => {
+    // Check if the string length is already 200 or more
+    if (s.length >= 200) {
+        return s;
+    }
+
+    // Calculate the number of spaces needed to reach a length of 200
+    const spacesNeeded = 200 - s.length;
+
+    // Append the required number of spaces to the string
+    for (let i = 0; i < spacesNeeded; i++) {
+        s += '-';
+    }
+    console.log(s);
+
+    return s;
+};
 
 const searchProduct = () =>
 {
    
+    const navigate = useNavigate();
+
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const searchProduct = searchParams.get('product');
@@ -29,7 +51,30 @@ const searchProduct = () =>
     const handleRangeChange = (event) => {
         setMaxValue(event.target.value);
     };
+    
+    const handleNavigate = (productId) => {
+        navigate(`/edit/${productId}`);
+    }
 
+    const cartHandler = async(productId,productPrice,quantity) =>
+    {
+        try
+        {
+            console.log("cart handler called");
+            const data = await axios.post(addToCart, {
+                productId: productId,
+                price: productPrice,
+                quantity:quantity
+            },{withCredentials:true})
+
+            console.log(data);
+
+        }
+        catch (err)
+        {
+            console.log("error while adding product to cart");
+        }
+    }
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -39,13 +84,19 @@ const searchProduct = () =>
                     maxValue:maxValue
                 });
                 setSearchResults(response.data.data); // Assuming the data is inside a 'data' property
-            } catch (error) {
+                console.log("searchProduct", searchResults);
+
+            } catch (error)
+            {
                 console.error('Error performing search:', error);
             }
         };
         setUser(data);
         fetchData();
     }, [searchProduct, minValue, maxValue]);
+
+    
+
 
    
     return (
@@ -190,45 +241,55 @@ const searchProduct = () =>
                                 searchResults?.map((product, index) => {
                                     return (
                                         <div key={index}>
-                                            <Link to={`/product/${product._id}`} >
+                                            
                                                 <div className="eachproduct bg-white rounded-lg overflow-hidden shadow-lg ring-4 ring-red-500 ring-opacity-40 w-[20vw]">
-                                                    <div className="relative">
+                                                <div className="relative">
+                                                    <Link to={`/product/${product._id}`} >
                                                         <img
-                                                            className="w-11/12 mx-auto mt-2"
-                                                            src="https://images.unsplash.com/photo-1523275335684-37898b6baf30"
+                                                            className="w-11/12 mx-auto mt-2 h-[130px]"
+                                                            src={product.imageUrl}
                                                             alt="Product Image"
-                                                        />
+                                                    />
+                                                    </Link>
                                                         {/* <div className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 m-2 rounded-md text-sm font-medium">
                                                   SALE
                                               </div> */}
+                                                        
                                                     </div>
                                                     <div className="p-4">
                                                         <h3 className="text-lg font-medium mb-2">{product.name}</h3>
                                                         <p className="text-gray-600 text-sm mb-4">
                                                             {
-                                                                product.description
-                                                            }.
+                                                                product.description.trim().length >200
+                                                                    ? product.description.substring(0, 180) :appendChar(product.description)
+                                                                 
+                                                               
+
+                                                            }
                                                         </p>
                                                         <div className="flex items-center justify-between">
                                                             <span className="font-bold text-lg">${product.price}</span>
                                                             {
                                                                 user && user.role === 'customer' &&
                                                                 (
-                                                                    <Link to={`/edit/${product._id}`}>
-                                                                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded">
+                                                                   
+                                                                    <button onClick={() => handleNavigate(product._id)}>
+                                                                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded" >
                                                                             Edit
                                                                         </button>
-                                                                    </Link>
+                                                                    </button>
+                                                                    
+                                                                   
                                                                   
                                                                 )
                                                             }
-                                                            <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded">
+                                                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded" onClick={() => { cartHandler(product._id, product.price,product.stock) }}>
                                                                 Cart
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </Link>
+                                            
 
                                         </div>
                                     )

@@ -29,6 +29,11 @@ const productSchema = new mongoose.Schema({
   {
       type: Number,
       default:0
+  },
+  createdBy:
+  {
+    ref: "User",
+    type: mongoose.Schema.Types.ObjectId 
   }
 });
 
